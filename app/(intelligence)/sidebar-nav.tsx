@@ -1,0 +1,92 @@
+'use client'
+
+import Link from 'next/link'
+import { signOut } from '@/app/(auth)/login/actions'
+import type { SchoolContext } from '@/types/ai'
+
+interface SidebarNavProps {
+  user: SchoolContext
+}
+
+const NAV_BY_ROLE: Record<string, Array<{ label: string; href: string }>> = {
+  owner: [
+    { label: 'School Health', href: '/owner' },
+    { label: 'Revenue Intelligence', href: '/owner#revenue' },
+    { label: 'Enrollment Forecast', href: '/owner#enrollment' },
+    { label: 'Staff ROI', href: '/owner#staff' },
+    { label: 'Ask AI', href: '/owner#query' },
+  ],
+  principal: [
+    { label: 'Morning Briefing', href: '/principal' },
+    { label: 'Risk Monitor', href: '/principal#risk' },
+    { label: 'Critical Alerts', href: '/principal#alerts' },
+    { label: 'Section Health', href: '/principal#sections' },
+    { label: 'Ask AI', href: '/principal#query' },
+  ],
+  teacher: [
+    { label: "Today's Schedule", href: '/teacher' },
+    { label: 'Class Pulse', href: '/teacher#pulse' },
+    { label: 'Student Spotlight', href: '/teacher#spotlight' },
+    { label: 'Diary Copilot', href: '/teacher#diary' },
+  ],
+  accountant: [
+    { label: 'Collection Dashboard', href: '/accountant' },
+    { label: 'Call Priority List', href: '/accountant#calls' },
+    { label: 'Aging Buckets', href: '/accountant#aging' },
+    { label: 'Cheque Tracker', href: '/accountant#cheques' },
+  ],
+  parent: [
+    { label: 'My Child', href: '/parent' },
+    { label: 'Weekly Summary', href: '/parent#summary' },
+    { label: 'Attendance', href: '/parent#attendance' },
+    { label: 'Ask AI', href: '/parent#query' },
+  ],
+  admin: [
+    { label: 'Morning Briefing', href: '/principal' },
+    { label: 'Risk Monitor', href: '/principal#risk' },
+    { label: 'Critical Alerts', href: '/principal#alerts' },
+    { label: 'Section Health', href: '/principal#sections' },
+    { label: 'Ask AI', href: '/principal#query' },
+  ],
+}
+
+export function SidebarNav({ user }: SidebarNavProps) {
+  const links = NAV_BY_ROLE[user.role] ?? NAV_BY_ROLE.principal
+  return (
+    <aside className="sticky top-4 hidden h-[calc(100vh-2rem)] w-72 shrink-0 flex-col rounded-xl border border-slate-200 bg-[#F0F7FF] p-4 shadow-sm md:flex">
+      <div>
+        <p className="text-lg font-semibold text-slate-900">Kairos</p>
+        <p className="mt-1 text-xs text-slate-500">Intelligence Layer</p>
+      </div>
+
+      <nav className="mt-6 space-y-1">
+        {links.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className="block rounded-lg px-3 py-2 text-sm text-slate-700 transition hover:bg-white hover:text-slate-900"
+          >
+            {item.label}
+          </Link>
+        ))}
+      </nav>
+
+      <div className="mt-auto space-y-3">
+        <div className="rounded-lg border border-slate-200 bg-white p-3">
+          <p className="text-sm font-medium text-slate-900">{user.userName || 'User'}</p>
+          <span className="mt-1 inline-flex rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium capitalize text-blue-700">
+            {user.role}
+          </span>
+        </div>
+        <form action={signOut}>
+          <button
+            type="submit"
+            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+          >
+            Sign out
+          </button>
+        </form>
+      </div>
+    </aside>
+  )
+}
