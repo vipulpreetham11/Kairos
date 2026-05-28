@@ -85,7 +85,12 @@ export function LoginForm() {
         <p className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>
       ) : null}
 
-      <p className="mt-6 text-center text-xs text-slate-500">Accounts are provisioned by your school administrator.</p>
+      <div className="mt-6 space-y-2 text-center text-xs text-slate-500">
+        <p>
+          <span className="font-semibold text-slate-700">Testing the app?</span> Demo credentials are listed at the bottom of the <a href="/" className="font-medium text-blue-600 hover:underline">Landing Page</a>.
+        </p>
+        <p>Secure access is provisioned by your school administrator.</p>
+      </div>
     </div>
   )
 }
