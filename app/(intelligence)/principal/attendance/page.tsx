@@ -182,7 +182,7 @@ export default async function PrincipalAttendancePage() {
     if (!studentAttMap.has(sId)) {
       const full_name = safe.string(raw.students?.full_name)
       const admission_no = safe.string(raw.students?.admission_no)
-      const enrolls = safe.array(raw.students?.enrollments)
+      const enrolls = safe.array(raw.students?.enrollments) as any[]
       const section_id = enrolls.length > 0 ? safe.string(enrolls[0].section_id) : ''
 
       studentAttMap.set(sId, {
