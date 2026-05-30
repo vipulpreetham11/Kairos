@@ -81,6 +81,55 @@ function outOfScopeResult(): NLQueryResult {
 async function buildSafeSupabaseQuery(params: StructuredQueryParams, constraints: QueryConstraints): Promise<Record<string, unknown>[]> {
   const supabase = await createServerClient()
   if (!constraints.allowedTables.includes(params.table)) return []
+
+  // AUTO-JOIN: when querying risk scores, always pull student name + class
+  if (params.table === 'student_risk_scores') {
+    const { data } = await supabase
+      .from('student_risk_scores')
+      .select(`
+        composite_risk_score,
+        risk_level,
+        trend,
+        risk_factors,
+        computed_at,
+        students!inner (
+          full_name,
+          admission_no,
+          enrollments!inner (
+            classes!inner (name),
+            sections!inner (name)
+          )
+        )
+      `)
+      .eq('school_id', constraints.schoolId)
+      .order('composite_risk_score', { ascending: false })
+      .limit(10)
+    return safe.array<Record<string, unknown>>(data)
+  }
+
+  // AUTO-JOIN: when querying students, always include class info
+  if (params.table === 'students') {
+    const { data } = await supabase
+      .from('students')
+      .select(`
+        id,
+        full_name,
+        admission_no,
+        gender,
+        enrollments!inner (
+          classes!inner (name),
+          sections!inner (name)
+        ),
+        student_risk_scores (
+          composite_risk_score,
+          risk_level
+        )
+      `)
+      .eq('school_id', constraints.schoolId)
+      .eq('is_deleted', false)
+      .limit(Math.min(safe.number(params.limit, 20), 50))
+    return safe.array<Record<string, unknown>>(data)
+  }
   let query = supabase.from(params.table).select(params.select).eq('school_id', constraints.schoolId).limit(Math.min(safe.number(params.limit, 20), 50))
   const roleFilter = constraints.roleFilter
   if (Array.isArray(roleFilter.section_id) && roleFilter.section_id.length > 0) query = query.in('section_id', safe.array<string>(roleFilter.section_id))
