@@ -9,6 +9,7 @@ import { computeRiskScoresBatch } from '@/lib/ai/risk'
 import { requireRole } from '@/lib/auth/get-current-user'
 import { RiskStudentsPanel } from './components/risk-students-panel'
 import { RealtimeInsights } from '@/components/shared/realtime-insights'
+import { TodaysPulse } from './components/todays-pulse'
 
 function tone(value: number, high: number, medium: number): string {
   if (value > high) return 'text-emerald-600'
@@ -48,6 +49,10 @@ export default async function PrincipalPage() {
 
   return (
     <div className="space-y-6">
+      <TodaysPulse
+        schoolId={user.schoolId}
+        academicYearId={user.academicYearId ?? ''}
+      />
       <DataFreshnessBar insightsGeneratedAt={generatedAt} isRefreshing={isStale} />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
