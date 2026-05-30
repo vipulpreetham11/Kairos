@@ -3,12 +3,13 @@
 import Link from 'next/link'
 import { signOut } from '@/app/(auth)/login/actions'
 import type { SchoolContext } from '@/types/ai'
+import { LayoutDashboard, Users, Calendar, BookOpen, MessageSquare } from 'lucide-react'
 
 interface SidebarNavProps {
   user: SchoolContext
 }
 
-const NAV_BY_ROLE: Record<string, Array<{ label: string; href: string }>> = {
+const NAV_BY_ROLE: Record<string, Array<{ label: string; href: string; icon?: any }>> = {
   owner: [
     { label: 'School Health', href: '/owner' },
     { label: 'Revenue Intelligence', href: '/owner#revenue' },
@@ -17,11 +18,11 @@ const NAV_BY_ROLE: Record<string, Array<{ label: string; href: string }>> = {
     { label: 'Ask AI', href: '/owner#query' },
   ],
   principal: [
-    { label: 'Morning Briefing', href: '/principal' },
-    { label: 'Risk Monitor', href: '/principal#risk' },
-    { label: 'Critical Alerts', href: '/principal#alerts' },
-    { label: 'Section Health', href: '/principal#sections' },
-    { label: 'Ask AI', href: '/principal/ask' },
+    { label: 'Dashboard',      href: '/principal',            icon: LayoutDashboard },
+    { label: 'Students',       href: '/principal/students',   icon: Users },
+    { label: 'Attendance',     href: '/principal/attendance', icon: Calendar },
+    { label: 'Exams & Results',href: '/principal/exams',      icon: BookOpen },
+    { label: 'Ask AI',         href: '/principal/ask',        icon: MessageSquare },
   ],
   teacher: [
     { label: "Today's Schedule", href: '/teacher' },
@@ -64,8 +65,9 @@ export function SidebarNav({ user }: SidebarNavProps) {
           <Link
             key={item.href}
             href={item.href}
-            className="block rounded-lg px-3 py-2 text-sm text-slate-700 transition hover:bg-white hover:text-slate-900"
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-700 transition hover:bg-white hover:text-slate-900"
           >
+            {item.icon && <item.icon className="h-4 w-4" />}
             {item.label}
           </Link>
         ))}
