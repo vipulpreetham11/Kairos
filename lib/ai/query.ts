@@ -156,6 +156,62 @@ async function buildSafeSupabaseQuery(params: StructuredQueryParams, constraints
     return safe.array<Record<string, unknown>>(data)
   }
 
+  // AUTO-JOIN: homework_submissions → diary + subject
+  if (params.table === 'homework_submissions') {
+    const filters = constraints.roleFilter || {}
+    let query = supabase
+      .from('homework_submissions')
+      .select(`
+        status,
+        created_at,
+        class_diary!inner (
+          date,
+          what_was_taught,
+          homework_given,
+          homework_due_date,
+          subjects!inner (name)
+        )
+      `)
+      .eq('school_id', constraints.schoolId)
+      .order('created_at', { ascending: false })
+      .limit(20)
+
+    if (safe.string(filters.student_id as string)) {
+      query = query.eq('student_id', 
+        safe.string(filters.student_id as string))
+    }
+
+    const { data } = await query
+    return safe.array<Record<string, unknown>>(data)
+  }
+
+  // AUTO-JOIN: attendance → student name
+  if (params.table === 'attendance') {
+    const filters = constraints.roleFilter || {}
+    let query = supabase
+      .from('attendance')
+      .select(`
+        date,
+        status,
+        students!inner (
+          full_name,
+          admission_no
+        )
+      `)
+      .eq('school_id', constraints.schoolId)
+      .order('date', { ascending: false })
+      .limit(30)
+
+    if (safe.string(filters.student_id as string)) {
+      query = query.eq('student_id',
+        safe.string(filters.student_id as string))
+    }
+
+    const { data } = await query
+    return safe.array<Record<string, unknown>>(data)
+  }
+
+
   // AUTO-JOIN: when querying students, always include class info
   if (params.table === 'students') {
     const { data } = await supabase
