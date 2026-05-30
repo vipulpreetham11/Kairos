@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { signOut } from '@/app/(auth)/login/actions'
 import type { SchoolContext } from '@/types/ai'
-import { LayoutDashboard, Users, Calendar, BookOpen, MessageSquare, IndianRupee } from 'lucide-react'
+import { LayoutDashboard, Users, Calendar, BookOpen, MessageSquare, IndianRupee, TrendingUp } from 'lucide-react'
 
 interface SidebarNavProps {
   user: SchoolContext
@@ -30,10 +30,9 @@ const NAV_BY_ROLE: Record<string, Array<{ label: string; href: string; icon?: an
     { label: 'Diary Copilot', href: '/teacher#diary' },
   ],
   accountant: [
-    { label: 'Collection Dashboard', href: '/accountant' },
-    { label: 'Call Priority List', href: '/accountant#calls' },
-    { label: 'Aging Buckets', href: '/accountant#aging' },
-    { label: 'Cheque Tracker', href: '/accountant#cheques' },
+    { label: 'Dashboard',   href: '/accountant',             icon: LayoutDashboard },
+    { label: 'Collections', href: '/accountant/collections', icon: TrendingUp },
+    { label: 'Ask AI',      href: '/accountant/ask',         icon: MessageSquare },
   ],
   parent: [
     { label: 'My Child', href: '/parent' },
