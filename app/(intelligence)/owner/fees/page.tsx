@@ -583,7 +583,7 @@ export default async function OwnerFeesPage() {
                     </td>
                     <td className="px-4 py-3 text-center">
                       <Link
-                        href={`/principal/students/${d.student_id}`}
+                        href={`/owner/students/${d.student_id}`}
                         className="inline-flex items-center rounded-lg border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50 transition-colors"
                       >
                         View Profile

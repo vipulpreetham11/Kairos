@@ -12,8 +12,9 @@ interface SidebarNavProps {
 const NAV_BY_ROLE: Record<string, Array<{ label: string; href: string; icon?: any }>> = {
   owner: [
     { label: 'Dashboard',  href: '/owner',            icon: LayoutDashboard },
+    { label: 'Students',   href: '/owner/students',   icon: Users },
     { label: 'Fees',       href: '/owner/fees',        icon: IndianRupee },
-    { label: 'Enrollment', href: '/owner/enrollment',  icon: Users },
+    { label: 'Enrollment', href: '/owner/enrollment',  icon: TrendingUp },
     { label: 'Ask AI',     href: '/owner/ask',         icon: MessageSquare },
   ],
   principal: [
