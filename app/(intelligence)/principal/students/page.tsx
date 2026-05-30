@@ -4,6 +4,33 @@ import { createServerClient } from '@/lib/supabase/server'
 import { safe } from '@/lib/utils/safe'
 import { Search } from 'lucide-react'
 
+type ClassRow = {
+  id: string
+  name: string
+}
+
+type StudentRow = {
+  id: string
+  full_name: string
+  admission_no: string
+  gender: string
+  date_of_birth: string
+  enrollments: {
+    roll_number: string
+    status: string
+    academic_year_id: string
+    class_id: string
+    section_id: string
+    classes: { name: string; display_order: number }
+    sections: { name: string }
+  }[]
+  student_risk_scores: {
+    composite_risk_score: number
+    risk_level: string
+    trend: string
+  }[]
+}
+
 export default async function PrincipalStudentsPage({
   searchParams,
 }: {
@@ -23,7 +50,7 @@ export default async function PrincipalStudentsPage({
     .eq('school_id', user.schoolId)
     .order('display_order')
 
-  const classes = safe.array(classesData)
+  const classes = safe.array<ClassRow>(classesData)
 
   // 2. Fetch Students
   let query = supabase
@@ -65,11 +92,11 @@ export default async function PrincipalStudentsPage({
   }
 
   // Flatten and map data
-  const rawStudents = safe.array(studentsData).map((s: any) => {
-    const enrollment = s.enrollments?.[0] || {}
-    const cls = enrollment.classes || {}
-    const sec = enrollment.sections || {}
-    const risk = s.student_risk_scores?.[0] || {}
+  const rawStudents = safe.array<StudentRow>(studentsData).map((s) => {
+    const enrollment = s.enrollments?.[0]
+    const cls = enrollment?.classes
+    const sec = enrollment?.sections
+    const risk = s.student_risk_scores?.[0]
 
     return {
       id: safe.string(s.id),
@@ -77,14 +104,14 @@ export default async function PrincipalStudentsPage({
       admission_no: safe.string(s.admission_no),
       gender: safe.string(s.gender),
       date_of_birth: safe.string(s.date_of_birth),
-      roll_number: safe.string(enrollment.roll_number),
-      class_id: safe.string(enrollment.class_id),
-      class_name: safe.string(cls.name),
-      section_name: safe.string(sec.name),
-      display_order: safe.number(cls.display_order, 999),
-      composite_risk_score: risk.composite_risk_score !== undefined && risk.composite_risk_score !== null ? safe.number(risk.composite_risk_score) : null,
-      risk_level: safe.string(risk.risk_level, ''),
-      trend: safe.string(risk.trend, '')
+      roll_number: safe.string(enrollment?.roll_number),
+      class_id: safe.string(enrollment?.class_id),
+      class_name: safe.string(cls?.name),
+      section_name: safe.string(sec?.name),
+      display_order: safe.number(cls?.display_order, 999),
+      composite_risk_score: risk?.composite_risk_score !== undefined && risk?.composite_risk_score !== null ? safe.number(risk.composite_risk_score) : null,
+      risk_level: safe.string(risk?.risk_level, ''),
+      trend: safe.string(risk?.trend, '')
     }
   })
 
@@ -162,7 +189,6 @@ export default async function PrincipalStudentsPage({
           name="class"
           defaultValue={classFilter}
           className="rounded-lg border border-slate-200 py-2 pl-3 pr-8 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          onChange={(e) => e.target.form?.submit()}
         >
           <option value="">All Classes</option>
           {classes.map(c => (
@@ -173,7 +199,6 @@ export default async function PrincipalStudentsPage({
           name="risk"
           defaultValue={riskFilter}
           className="rounded-lg border border-slate-200 py-2 pl-3 pr-8 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          onChange={(e) => e.target.form?.submit()}
         >
           <option value="">All Risk Levels</option>
           <option value="critical">Critical</option>
@@ -181,9 +206,7 @@ export default async function PrincipalStudentsPage({
           <option value="medium">Medium</option>
           <option value="low">Low</option>
         </select>
-        <noscript>
-          <button type="submit" className="rounded-lg bg-blue-600 px-4 py-2 text-sm text-white">Filter</button>
-        </noscript>
+        <button type="submit" className="rounded-lg bg-blue-600 px-4 py-2 text-sm text-white">Filter</button>
       </form>
 
       <div className="rounded-lg border border-slate-200 bg-white">

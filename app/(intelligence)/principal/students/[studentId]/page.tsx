@@ -6,6 +6,55 @@ import { safe } from '@/lib/utils/safe'
 import { rupees } from '@/lib/utils/format'
 import { ArrowLeft, ArrowUp, ArrowDown, Minus } from 'lucide-react'
 
+type StudentDetailRow = {
+  id: string
+  full_name: string
+  admission_no: string
+  enrollments: {
+    classes: { name: string }
+    sections: { name: string }
+  }[]
+}
+
+type RiskScoreRow = {
+  composite_risk_score: number
+  risk_level: string
+  trend: string
+  risk_factors: { factor: string; score: number; detail: string }[]
+}
+
+type AttendanceRow = {
+  date: string
+  status: string
+}
+
+type ResultRow = {
+  marks_obtained: number
+  max_marks: number
+  grade: string
+  is_pass: boolean
+  subjects: { name: string }
+  exams: { name: string; start_date: string }
+}
+
+type FeeRow = {
+  outstanding: number
+  due_date: string
+  status: string
+  net_amount: number
+  fee_heads: { name: string }
+  fee_terms: { name: string }
+}
+
+type HomeworkRow = {
+  status: string
+  created_at: string
+  class_diary: {
+    subject_id: string
+    subjects: { name: string }
+  }
+}
+
 export default async function StudentProfilePage({
   params,
 }: {
@@ -118,42 +167,43 @@ export default async function StudentProfilePage({
     homeworkPromise
   ])
 
-  const risk = riskData || null
-  const attendance = safe.array(attendanceData)
+  const risk = riskData as RiskScoreRow | null
+  const attendance = safe.array<AttendanceRow>(attendanceData)
   
   // Sort results in memory to avoid nested ordering issues
-  const results = safe.array(resultsData)
-  results.sort((a: any, b: any) => {
+  const results = safe.array<ResultRow>(resultsData)
+  results.sort((a, b) => {
     const dateA = new Date(a.exams?.start_date || 0).getTime()
     const dateB = new Date(b.exams?.start_date || 0).getTime()
     return dateB - dateA
   })
 
-  const fees = safe.array(feesData)
-  const homework = safe.array(homeworkData)
+  const fees = safe.array<FeeRow>(feesData)
+  const homework = safe.array<HomeworkRow>(homeworkData)
 
-  const enrollment = studentData.enrollments?.[0] || {}
-  const cls = enrollment.classes || {}
-  const sec = enrollment.sections || {}
-  const studentInitials = safe.string(studentData.full_name).substring(0, 2).toUpperCase()
+  const rawStudent = studentData as unknown as StudentDetailRow
+  const enrollment = rawStudent.enrollments?.[0]
+  const cls = enrollment?.classes
+  const sec = enrollment?.sections
+  const studentInitials = safe.string(rawStudent.full_name).substring(0, 2).toUpperCase()
 
   // KPI calculations
   const totalDays = attendance.length
-  const presentDays = attendance.filter((a: any) => a.status === 'present').length
+  const presentDays = attendance.filter(a => a.status === 'present').length
   const attendanceRate = totalDays > 0 ? Math.round((presentDays / totalDays) * 100) : 0
 
-  const totalOutstandingPaise = fees.reduce((sum: number, f: any) => sum + safe.number(f.outstanding), 0)
+  const totalOutstandingPaise = fees.reduce((sum, f) => sum + safe.number(f.outstanding), 0)
   const totalOutstandingText = rupees.format(totalOutstandingPaise)
 
-  const validResults = results.filter((r: any) => safe.number(r.max_marks) > 0)
+  const validResults = results.filter(r => safe.number(r.max_marks) > 0)
   let examAvg = 0
   if (validResults.length > 0) {
-    const totalScore = validResults.reduce((sum: number, r: any) => sum + (safe.number(r.marks_obtained) / safe.number(r.max_marks)), 0)
+    const totalScore = validResults.reduce((sum, r) => sum + (safe.number(r.marks_obtained) / safe.number(r.max_marks)), 0)
     examAvg = Math.round((totalScore / validResults.length) * 100)
   }
 
   const totalHw = homework.length
-  const completedHw = homework.filter((h: any) => h.status === 'completed').length
+  const completedHw = homework.filter(h => h.status === 'completed').length
   const hwCompletionRate = totalHw > 0 ? Math.round((completedHw / totalHw) * 100) : 0
 
   function getRiskBadgeClasses(level: string) {
@@ -190,9 +240,9 @@ export default async function StudentProfilePage({
             {studentInitials}
           </div>
           <div>
-            <h1 className="text-xl font-semibold text-slate-900">{safe.string(studentData.full_name)}</h1>
+            <h1 className="text-xl font-semibold text-slate-900">{safe.string(rawStudent.full_name)}</h1>
             <p className="text-sm text-slate-500">
-              Admission: {safe.string(studentData.admission_no)} • {safe.string(cls.name)} - {safe.string(sec.name)}
+              Admission: {safe.string(rawStudent.admission_no)} • {safe.string(cls?.name)} - {safe.string(sec?.name)}
             </p>
           </div>
         </div>
@@ -271,7 +321,7 @@ export default async function StudentProfilePage({
       <div className="rounded-lg border border-slate-200 bg-white p-4">
         <h2 className="mb-4 text-base font-semibold text-slate-900">Attendance — Last 60 Days</h2>
         <div className="flex flex-wrap gap-2">
-          {attendance.map((a: any, i: number) => (
+          {attendance.map((a, i) => (
             <div 
               key={i} 
               title={`${new Date(a.date).toLocaleDateString()}: ${a.status}`}
@@ -309,7 +359,7 @@ export default async function StudentProfilePage({
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
-                {results.map((r: any, i: number) => {
+                {results.map((r, i) => {
                   const examName = r.exams?.name || 'Unknown Exam'
                   const subjectName = r.subjects?.name || 'Unknown Subject'
                   const isPass = r.is_pass
@@ -354,7 +404,7 @@ export default async function StudentProfilePage({
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
-                {fees.map((f: any, i: number) => {
+                {fees.map((f, i) => {
                   const outstanding = safe.number(f.outstanding)
                   const isPaid = f.status === 'paid' || outstanding === 0
                   
@@ -401,7 +451,7 @@ export default async function StudentProfilePage({
               {completedHw} of {totalHw} completed ({hwCompletionRate}%)
             </p>
             <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-              {homework.map((h: any, i: number) => (
+              {homework.map((h, i) => (
                 <div key={i} className="flex items-center justify-between rounded border border-slate-100 bg-slate-50 p-2 text-sm">
                   <div className="flex flex-col">
                     <span className="font-medium text-slate-700">{h.class_diary?.subjects?.name || 'Unknown'}</span>
