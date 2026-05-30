@@ -114,23 +114,23 @@ export async function TodaysPulse({ schoolId, academicYearId }: TodaysPulseProps
   // Compute section marking status
   const totalSections = safe.array(sectionsData).length
   const markedSectionIds = new Set(
-    safe.array(todayAttData).map((r: { section_id: string }) => r.section_id)
+    (safe.array(todayAttData) as { section_id: string }[]).map((r) => r.section_id)
   )
   const markedCount = markedSectionIds.size
   const unmarkedCount = Math.max(0, totalSections - markedCount)
 
   // Absent count today (distinct)
   const absentTodayIds = new Set(
-    safe.array(absentTodayData).map((r: { student_id: string }) => r.student_id)
+    (safe.array(absentTodayData) as { student_id: string }[]).map((r) => r.student_id)
   )
   const absentCount = absentTodayIds.size
 
   // Consecutive absences: students absent all 3 days
   const absentYestSet = new Set(
-    safe.array(absentYestData).map((r: { student_id: string }) => r.student_id)
+    (safe.array(absentYestData) as { student_id: string }[]).map((r) => r.student_id)
   )
   const absentThreeDaysSet = new Set(
-    safe.array(absentThreeDaysData).map((r: { student_id: string }) => r.student_id)
+    (safe.array(absentThreeDaysData) as { student_id: string }[]).map((r) => r.student_id)
   )
   let consecutiveAbsentCount = 0
   for (const id of absentTodayIds) {
