@@ -26,7 +26,7 @@ export function RiskStudentsPanel({ students, schoolId, userId = '' }: RiskStude
         <StudentMiniCard
           key={student.student_id}
           student={student}
-          onViewProfile={(studentId) => router.push(`/principal/${studentId}`)}
+          onViewProfile={(studentId) => router.push(`/principal/students/${studentId}`)}
           onDraftMessage={(studentId) => {
             const found = students.find((s) => s.student_id === studentId)
             setSelectedStudent({ id: studentId, name: found?.student_name ?? 'Student' })
