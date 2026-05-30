@@ -54,7 +54,7 @@ export async function saveDiaryEntry(
       return { success: false, error: 'Unauthorized', code: 'UNAUTHORIZED' }
     }
 
-    const supabase = await createServerClient()
+    const supabase = createServerClient()
     const today = new Date().toISOString().split('T')[0]
 
     const { data, error } = await supabase

@@ -33,7 +33,8 @@ export async function askAccountantAI(
     })
 
     return { success: true, result }
-  } catch {
+  } catch (error) {
+    console.error('[ACCOUNTANT_ASK]', error)
     return { success: false, error: 'Failed to process question' }
   }
 }

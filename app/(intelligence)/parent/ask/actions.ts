@@ -24,7 +24,7 @@ export async function askParentAI(
       return { success: false, error: 'Question must be 500 characters or fewer' }
     }
 
-    const supabase = await createServerClient()
+    const supabase = createServerClient()
 
     const { data: parentData } = await supabase
       .from('parents')
@@ -33,15 +33,29 @@ export async function askParentAI(
       .eq('school_id', user.schoolId)
       .single()
 
+    if (!parentData) {
+      return { 
+        success: false, 
+        error: 'Parent profile not found' 
+      }
+    }
+
     const { data: link } = await supabase
       .from('student_parents')
       .select('student_id')
-      .eq('parent_id', parentData?.id || '')
+      .eq('parent_id', parentData.id)
       .eq('school_id', user.schoolId)
       .limit(1)
       .single()
 
-    const studentId = link?.student_id ?? ''
+    if (!link?.student_id) {
+      return { 
+        success: false, 
+        error: 'No student linked to your account' 
+      }
+    }
+
+    const studentId = link.student_id
 
     const result = await executeNLQuery({
       question: question.trim(),
@@ -54,7 +68,8 @@ export async function askParentAI(
     })
 
     return { success: true, result }
-  } catch {
+  } catch (error) {
+    console.error('[PARENT_ASK]', error)
     return { success: false, error: 'Failed to process question' }
   }
 }

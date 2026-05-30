@@ -33,7 +33,8 @@ export async function askAI(
     })
 
     return { success: true, result }
-  } catch {
+  } catch (error) {
+    console.error('[PRINCIPAL_ASK]', error)
     return { success: false, error: 'Failed to process question' }
   }
 }

@@ -33,7 +33,8 @@ export async function askOwnerAI(
     })
 
     return { success: true, result }
-  } catch {
+  } catch (error) {
+    console.error('[OWNER_ASK]', error)
     return { success: false, error: 'Failed to process question' }
   }
 }
