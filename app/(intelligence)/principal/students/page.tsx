@@ -239,7 +239,7 @@ export default async function PrincipalStudentsPage({
                     <td className="px-4 py-3">
                       <div className="font-medium text-slate-900">{student.full_name}</div>
                       <div className="text-xs text-slate-500">
-                        {student.gender} • DOB: {student.date_of_birth ? new Date(student.date_of_birth).toLocaleDateString() : 'N/A'}
+                        {student.gender} · DOB: {student.date_of_birth ? new Date(student.date_of_birth).toLocaleDateString() : 'N/A'}
                       </div>
                     </td>
                     <td className="px-4 py-3 font-medium text-slate-700">

@@ -242,7 +242,7 @@ export default async function StudentProfilePage({
           <div>
             <h1 className="text-xl font-semibold text-slate-900">{safe.string(rawStudent.full_name)}</h1>
             <p className="text-sm text-slate-500">
-              Admission: {safe.string(rawStudent.admission_no)} • {safe.string(cls?.name)} - {safe.string(sec?.name)}
+              Admission: {safe.string(rawStudent.admission_no)} · {safe.string(cls?.name)} - {safe.string(sec?.name)}
             </p>
           </div>
         </div>
