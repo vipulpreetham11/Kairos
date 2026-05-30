@@ -112,10 +112,10 @@ export default async function TeacherStudentsPage({
   const allStudents = safeStudentsRaw
     .map((s: any) => {
       const sId = safe.string(s.id)
-      const enroll = safe.array(s.enrollments)[0] as any
-      const risk = safe.array(s.student_risk_scores)[0] as any
+      const enroll = safe.array<Record<string, any>>(s.enrollments)[0]
+      const risk = safe.array<Record<string, any>>(s.student_risk_scores)[0]
 
-      const att = safe.array(attendanceRaw).find((a: any) => safe.string(a.student_id) === sId)
+      const att = safe.array<Record<string, any>>(attendanceRaw).find((a) => safe.string(a.student_id) === sId)
       const presentToday = att ? safe.string(att.status).toLowerCase() : null
 
       const hw = homeworkRaw.filter((h: any) => safe.string(h.student_id) === sId)
