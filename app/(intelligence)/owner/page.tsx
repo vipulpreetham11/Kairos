@@ -24,8 +24,8 @@ export default async function OwnerPage() {
     academicYearId: user.academicYearId ?? '',
     userId: user.userId,
     dateRange: {
-      from: new Date('2025-06-01'),
-      to: new Date('2025-11-30'),
+      from: new Date(new Date().getFullYear(), 0, 1),
+      to: new Date(),
     }
   })
 

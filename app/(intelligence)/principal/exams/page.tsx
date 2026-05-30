@@ -21,7 +21,7 @@ export default async function PrincipalExamsPage() {
       'owner' | 'principal' | 'teacher' | 'accountant' | 'parent'
     >
   )
-  const supabase = await createServerClient()
+  const supabase = createServerClient()
 
   // 1. Fetch data in parallel
   const examsPromise = supabase

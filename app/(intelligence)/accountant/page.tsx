@@ -12,7 +12,7 @@ import { RealtimeInsights } from '@/components/shared/realtime-insights'
 
 export default async function AccountantPage() {
   const user = await requireRole(['accountant'])
-  const supabase = await createServerClient()
+  const supabase = createServerClient()
 
   const { insights, generatedAt, isStale } = await getCachedInsights({
     role: 'accountant',

@@ -25,7 +25,7 @@ export async function askTeacherAI(
       return { success: false, error: 'Question must be 500 characters or fewer' }
     }
 
-    const supabase = await createServerClient()
+    const supabase = createServerClient()
 
     const { data: assignments } = await supabase
       .from('teacher_assignments')

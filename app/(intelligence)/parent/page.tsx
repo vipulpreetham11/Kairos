@@ -28,7 +28,7 @@ export default async function ParentPage() {
   }
 
   const studentId = childIds[0]
-  const supabase = await createServerClient()
+  const supabase = createServerClient()
 
   const { data: student } = await supabase
     .from('students')

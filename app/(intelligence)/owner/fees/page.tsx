@@ -11,7 +11,7 @@ export default async function OwnerFeesPage() {
       'owner' | 'principal' | 'teacher' | 'accountant' | 'parent'
     >
   )
-  const supabase = await createServerClient()
+  const supabase = createServerClient()
 
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
     .toISOString()
