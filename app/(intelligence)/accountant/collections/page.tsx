@@ -10,7 +10,7 @@ export default async function AccountantCollectionsPage() {
       'owner' | 'principal' | 'teacher' | 'accountant' | 'parent'
     >
   )
-  const supabase = createServerClient()
+  const supabase = await createServerClient()
 
   const today = new Date().toISOString().split('T')[0]
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)

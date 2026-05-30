@@ -37,7 +37,7 @@ export default async function ParentResultsPage({
       'owner' | 'principal' | 'teacher' | 'accountant' | 'parent'
     >
   )
-  const supabase = createServerClient()
+  const supabase = await createServerClient()
 
   // 1. Get parent record
   const { data: parentData } = await supabase

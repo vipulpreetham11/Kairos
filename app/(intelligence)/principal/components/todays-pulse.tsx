@@ -25,7 +25,7 @@ function formatAmount(paise: number): string {
 }
 
 export async function TodaysPulse({ schoolId, academicYearId }: TodaysPulseProps) {
-  const supabase = createServerClient()
+  const supabase = await createServerClient()
 
   const today = new Date().toISOString().split('T')[0]
   const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0]

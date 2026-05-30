@@ -24,7 +24,7 @@ export async function askParentAI(
       return { success: false, error: 'Question must be 500 characters or fewer' }
     }
 
-    const supabase = createServerClient()
+    const supabase = await createServerClient()
 
     const { data: parentData } = await supabase
       .from('parents')

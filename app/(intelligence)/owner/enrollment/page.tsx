@@ -43,7 +43,7 @@ export default async function OwnerEnrollmentPage() {
       'owner' | 'principal' | 'teacher' | 'accountant' | 'parent'
     >
   )
-  const supabase = createServerClient()
+  const supabase = await createServerClient()
 
   const [
     { data: classesRaw },

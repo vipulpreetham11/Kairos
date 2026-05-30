@@ -14,7 +14,7 @@ export default async function TeacherStudentsPage({
       'owner' | 'principal' | 'teacher' | 'accountant' | 'parent'
     >
   )
-  const supabase = createServerClient()
+  const supabase = await createServerClient()
 
   // 1. Get teacher's assigned sections
   const { data: assignments } = await supabase

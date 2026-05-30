@@ -12,7 +12,7 @@ import { RealtimeInsights } from '@/components/shared/realtime-insights'
 
 export default async function TeacherPage() {
   const user = await requireRole(['teacher'])
-  const supabase = createServerClient()
+  const supabase = await createServerClient()
 
   const { data: assignments } = await supabase
     .from('teacher_assignments')

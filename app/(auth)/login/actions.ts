@@ -35,7 +35,7 @@ export async function signIn(
       }
     }
 
-    const supabase = createServerClient()
+    const supabase = await createServerClient()
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) {
       return {
@@ -54,7 +54,7 @@ export async function signIn(
 }
 
 export async function signOut(): Promise<void> {
-  const supabase = createServerClient()
+  const supabase = await createServerClient()
   await supabase.auth.signOut()
   redirect('/login')
 }
