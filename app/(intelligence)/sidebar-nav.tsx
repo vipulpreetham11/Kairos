@@ -21,7 +21,7 @@ const NAV_BY_ROLE: Record<string, Array<{ label: string; href: string }>> = {
     { label: 'Risk Monitor', href: '/principal#risk' },
     { label: 'Critical Alerts', href: '/principal#alerts' },
     { label: 'Section Health', href: '/principal#sections' },
-    { label: 'Ask AI', href: '/principal#query' },
+    { label: 'Ask AI', href: '/principal/ask' },
   ],
   teacher: [
     { label: "Today's Schedule", href: '/teacher' },
@@ -46,7 +46,7 @@ const NAV_BY_ROLE: Record<string, Array<{ label: string; href: string }>> = {
     { label: 'Risk Monitor', href: '/principal#risk' },
     { label: 'Critical Alerts', href: '/principal#alerts' },
     { label: 'Section Health', href: '/principal#sections' },
-    { label: 'Ask AI', href: '/principal#query' },
+    { label: 'Ask AI', href: '/principal/ask' },
   ],
 }
 
