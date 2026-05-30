@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { signOut } from '@/app/(auth)/login/actions'
 import type { SchoolContext } from '@/types/ai'
-import { LayoutDashboard, Users, Calendar, BookOpen, MessageSquare } from 'lucide-react'
+import { LayoutDashboard, Users, Calendar, BookOpen, MessageSquare, IndianRupee } from 'lucide-react'
 
 interface SidebarNavProps {
   user: SchoolContext
@@ -11,11 +11,10 @@ interface SidebarNavProps {
 
 const NAV_BY_ROLE: Record<string, Array<{ label: string; href: string; icon?: any }>> = {
   owner: [
-    { label: 'School Health', href: '/owner' },
-    { label: 'Revenue Intelligence', href: '/owner#revenue' },
-    { label: 'Enrollment Forecast', href: '/owner#enrollment' },
-    { label: 'Staff ROI', href: '/owner#staff' },
-    { label: 'Ask AI', href: '/owner#query' },
+    { label: 'Dashboard',  href: '/owner',            icon: LayoutDashboard },
+    { label: 'Fees',       href: '/owner/fees',        icon: IndianRupee },
+    { label: 'Enrollment', href: '/owner/enrollment',  icon: Users },
+    { label: 'Ask AI',     href: '/owner/ask',         icon: MessageSquare },
   ],
   principal: [
     { label: 'Dashboard',      href: '/principal',            icon: LayoutDashboard },
