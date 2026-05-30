@@ -35,10 +35,10 @@ const NAV_BY_ROLE: Record<string, Array<{ label: string; href: string; icon?: an
     { label: 'Ask AI',      href: '/accountant/ask',         icon: MessageSquare },
   ],
   parent: [
-    { label: 'My Child', href: '/parent' },
-    { label: 'Weekly Summary', href: '/parent#summary' },
-    { label: 'Attendance', href: '/parent#attendance' },
-    { label: 'Ask AI', href: '/parent#query' },
+    { label: 'My Child',   href: '/parent',            icon: Users },
+    { label: 'Attendance', href: '/parent/attendance', icon: Calendar },
+    { label: 'Results',    href: '/parent/results',    icon: BookOpen },
+    { label: 'Ask AI',     href: '/parent/ask',        icon: MessageSquare },
   ],
   admin: [
     { label: 'Morning Briefing', href: '/principal' },
