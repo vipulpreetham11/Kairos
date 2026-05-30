@@ -63,8 +63,8 @@ export default async function OwnerStudentsPage({
     const activeEnrollment = enrollments.find(
       (e: any) => e.status === 'active' && e.academic_year_id === user.academicYearId
     )
-    const classData = activeEnrollment?.classes || {}
-    const sectionData = activeEnrollment?.sections || {}
+    const classData = (activeEnrollment as any)?.classes || {}
+    const sectionData = (activeEnrollment as any)?.sections || {}
 
     let total_due = 0
     let total_paid = 0
@@ -88,7 +88,7 @@ export default async function OwnerStudentsPage({
       id: safe.string(s.id),
       full_name: safe.string(s.full_name),
       admission_no: safe.string(s.admission_no),
-      class_id: safe.string(activeEnrollment?.class_id),
+      class_id: safe.string((activeEnrollment as any)?.class_id),
       class_name: safe.string(classData.name),
       display_order: safe.number(classData.display_order),
       section_name: safe.string(sectionData.name),
@@ -96,8 +96,8 @@ export default async function OwnerStudentsPage({
       total_paid,
       total_outstanding,
       unpaid_count,
-      fee_score: risk.fee_score ? safe.number(risk.fee_score) : null,
-      risk_level: safe.string(risk.risk_level),
+      fee_score: (risk as any).fee_score ? safe.number((risk as any).fee_score) : null,
+      risk_level: safe.string((risk as any).risk_level),
     }
   }).sort((a, b) => b.total_outstanding - a.total_outstanding)
 

@@ -1,3 +1,4 @@
+import React from 'react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { requireRole } from '@/lib/auth/get-current-user'
@@ -91,8 +92,8 @@ export default async function OwnerStudentDetailPage({
   const paymentCount = payments.length
   const collectionRate = totalDue > 0 ? (totalPaid / totalDue) * 100 : 0
 
-  const className = safe.string(enrollment?.classes?.name)
-  const sectionName = safe.string(enrollment?.sections?.name)
+  const className = safe.string((enrollment?.classes as any)?.name ?? (enrollment?.classes as any)?.[0]?.name)
+  const sectionName = safe.string((enrollment?.sections as any)?.name ?? (enrollment?.sections as any)?.[0]?.name)
   const classDisplay = className
     ? `Class ${className} ${sectionName ? `- ${sectionName}` : ''}`
     : 'Not Assigned'
@@ -138,7 +139,7 @@ export default async function OwnerStudentDetailPage({
     }
   >()
 
-  invoices.forEach((inv) => {
+  invoices.forEach((inv: any) => {
     const termName = safe.string(inv.fee_terms?.name) || 'Unknown Term'
     if (!termGroups.has(termName)) {
       termGroups.set(termName, {
@@ -385,7 +386,7 @@ export default async function OwnerStudentDetailPage({
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {payments.map((p) => {
+                {payments.map((p: any) => {
                   const mode = safe.string(p.payment_mode).toLowerCase()
                   let modeBadge = 'bg-slate-100 text-slate-700'
                   if (mode === 'cash') modeBadge = 'bg-green-100 text-green-700'
