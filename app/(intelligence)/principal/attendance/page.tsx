@@ -112,7 +112,7 @@ export default async function PrincipalAttendancePage() {
   let totalPresent = 0
   let totalAbsent = 0
 
-  safe.array(todayAttData).forEach((record) => {
+  safe.array(todayAttData).forEach((record: any) => {
     const secId = safe.string(record.section_id)
     const sec = sectionMap.get(secId)
     if (!sec) return
@@ -143,7 +143,7 @@ export default async function PrincipalAttendancePage() {
 
   // 4. Build trend data for chart
   const trendMap = new Map<string, { present: number; total: number }>()
-  safe.array(trendAttData).forEach((record) => {
+  safe.array(trendAttData).forEach((record: any) => {
     const date = safe.string(record.date)
     if (!date) return
     if (!trendMap.has(date)) trendMap.set(date, { present: 0, total: 0 })
@@ -302,7 +302,7 @@ export default async function PrincipalAttendancePage() {
         </h2>
         {trend.length > 0 ? (
           <ChartWrapper
-            config={{
+            data={{
               type: 'line',
               labels: trend.map((d) => d.date),
               datasets: [
