@@ -58,11 +58,11 @@ type HomeworkRow = {
 export default async function StudentProfilePage({
   params,
 }: {
-  params: { studentId: string }
+  params: Promise<{ studentId: string }>
 }) {
+  const { studentId } = await params
   const user = await requireRole(['principal', 'admin', 'super_admin'] as unknown as Array<'owner' | 'principal' | 'teacher' | 'accountant' | 'parent'>)
   const supabase = await createServerClient()
-  const studentId = params.studentId
 
   // 1. Verify student belongs to same school + fetch basic details
   const { data: studentData } = await supabase
