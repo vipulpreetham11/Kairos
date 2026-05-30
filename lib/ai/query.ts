@@ -107,6 +107,55 @@ async function buildSafeSupabaseQuery(params: StructuredQueryParams, constraints
     return safe.array<Record<string, unknown>>(data)
   }
 
+  // AUTO-JOIN: fee_invoices → student name
+  if (params.table === 'fee_invoices') {
+    const { data } = await supabase
+      .from('fee_invoices')
+      .select(`
+        outstanding,
+        net_amount,
+        amount_paid,
+        due_date,
+        status,
+        students!inner (
+          full_name,
+          admission_no,
+          enrollments!inner (
+            classes!inner (name),
+            sections!inner (name)
+          )
+        ),
+        fee_heads!inner (name),
+        fee_terms!inner (name)
+      `)
+      .eq('school_id', constraints.schoolId)
+      .gt('outstanding', 0)
+      .order('outstanding', { ascending: false })
+      .limit(10)
+    return safe.array<Record<string, unknown>>(data)
+  }
+
+  // AUTO-JOIN: fee_payments → student name  
+  if (params.table === 'fee_payments') {
+    const { data } = await supabase
+      .from('fee_payments')
+      .select(`
+        amount,
+        payment_mode,
+        payment_date,
+        receipt_number,
+        students!inner (
+          full_name,
+          admission_no
+        )
+      `)
+      .eq('school_id', constraints.schoolId)
+      .eq('status', 'active')
+      .order('payment_date', { ascending: false })
+      .limit(10)
+    return safe.array<Record<string, unknown>>(data)
+  }
+
   // AUTO-JOIN: when querying students, always include class info
   if (params.table === 'students') {
     const { data } = await supabase
