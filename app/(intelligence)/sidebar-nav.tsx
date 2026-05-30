@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { signOut } from '@/app/(auth)/login/actions'
 import type { SchoolContext } from '@/types/ai'
-import { LayoutDashboard, Users, Calendar, BookOpen, MessageSquare, IndianRupee, TrendingUp } from 'lucide-react'
+import { LayoutDashboard, Users, Calendar, BookOpen, MessageSquare, IndianRupee, TrendingUp, Heart } from 'lucide-react'
 
 interface SidebarNavProps {
   user: SchoolContext
@@ -24,10 +24,9 @@ const NAV_BY_ROLE: Record<string, Array<{ label: string; href: string; icon?: an
     { label: 'Ask AI',         href: '/principal/ask',        icon: MessageSquare },
   ],
   teacher: [
-    { label: "Today's Schedule", href: '/teacher' },
-    { label: 'Class Pulse', href: '/teacher#pulse' },
-    { label: 'Student Spotlight', href: '/teacher#spotlight' },
-    { label: 'Diary Copilot', href: '/teacher#diary' },
+    { label: 'Dashboard',  href: '/teacher',          icon: LayoutDashboard },
+    { label: 'My Students',href: '/teacher/students', icon: Users },
+    { label: 'Ask AI',     href: '/teacher/ask',      icon: MessageSquare },
   ],
   accountant: [
     { label: 'Dashboard',   href: '/accountant',             icon: LayoutDashboard },
@@ -35,7 +34,7 @@ const NAV_BY_ROLE: Record<string, Array<{ label: string; href: string; icon?: an
     { label: 'Ask AI',      href: '/accountant/ask',         icon: MessageSquare },
   ],
   parent: [
-    { label: 'My Child',   href: '/parent',            icon: Users },
+    { label: 'My Child',   href: '/parent',            icon: Heart },
     { label: 'Attendance', href: '/parent/attendance', icon: Calendar },
     { label: 'Results',    href: '/parent/results',    icon: BookOpen },
     { label: 'Ask AI',     href: '/parent/ask',        icon: MessageSquare },
