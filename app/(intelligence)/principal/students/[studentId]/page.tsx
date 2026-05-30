@@ -12,7 +12,7 @@ export default async function StudentProfilePage({
   params: { studentId: string }
 }) {
   const user = await requireRole(['principal', 'admin', 'super_admin'] as unknown as Array<'owner' | 'principal' | 'teacher' | 'accountant' | 'parent'>)
-  const supabase = createServerClient()
+  const supabase = await createServerClient()
   const studentId = params.studentId
 
   // 1. Verify student belongs to same school + fetch basic details
