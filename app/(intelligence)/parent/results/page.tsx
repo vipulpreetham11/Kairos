@@ -176,7 +176,7 @@ export default async function ParentResultsPage({
     }
   })
 
-  const rankings = safe.array(rankingsData)
+  const rankings = safe.array<Record<string, any>>(rankingsData)
   
   const examResults = Array.from(examMap.values()).map(e => {
     e.percentage = e.maxTotal > 0 ? (e.totalMarks / e.maxTotal) * 100 : 0

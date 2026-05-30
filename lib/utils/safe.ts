@@ -12,6 +12,13 @@ export const safe = {
     return typeof value === 'string' ? value : fallback
   },
 
+  boolean(value: unknown, fallback = false): boolean {
+    if (typeof value === 'boolean') return value
+    if (typeof value === 'string') return value.toLowerCase() === 'true'
+    if (typeof value === 'number') return value > 0
+    return fallback
+  },
+
   array<T>(value: unknown): T[] {
     return Array.isArray(value) ? (value as T[]) : []
   },
