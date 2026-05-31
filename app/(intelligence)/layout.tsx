@@ -17,7 +17,7 @@ const ROLE_HOME: Record<string, string> = {
 const ROLE_ALLOWED_PATHS: Record<string, string[]> = {
   owner: ['/owner'],
   principal: ['/principal'],
-  teacher: ['/teacher'],
+  teacher: ['/teacher', '/principal/students'],
   accountant: ['/accountant'],
   parent: ['/parent'],
   admin: ['/principal'],

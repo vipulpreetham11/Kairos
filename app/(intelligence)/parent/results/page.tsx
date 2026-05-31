@@ -457,7 +457,11 @@ export default async function ParentResultsPage({
                               <span className="text-slate-400 text-xs">—</span>
                             ) : (
                               <span className={`inline-flex px-2 py-0.5 rounded text-xs font-bold ${getGradeColor(sub.grade)}`}>
-                                {sub.grade || '-'}
+                                {sub.grade
+                                  ? sub.grade
+                                  : sub.marks && sub.max
+                                    ? `${Math.round((sub.marks / sub.max) * 100)}%`
+                                    : '-'}
                               </span>
                             )}
                           </td>

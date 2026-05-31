@@ -280,7 +280,7 @@ export async function executeNLQuery(params: NLQueryParams): Promise<NLQueryResu
     const rows = await buildSafeSupabaseQuery(safeParams, constraints)
     const answer = await callAI({
       messages: [
-        { role: 'system', content: 'You are a school data assistant. Synthesize this data into a clear, specific answer in 2-3 sentences. Use specific numbers. Use ₹ for amounts. Be direct. No hedging.' },
+        { role: 'system', content: 'You are a school data assistant. Synthesize this data into a clear, specific answer in 2-3 sentences. Use specific numbers. IMPORTANT: All monetary amounts in the data are stored in PAISE (smallest Indian currency unit). 1 rupee = 100 paise. Always divide any amount by 100 before displaying. Format as ₹X,XX,XXX (Indian number format). Example: if data shows 2500000, display as ₹25,000. Example: if data shows 58168473, display as ₹5,81,685. Be direct. No hedging.' },
         { role: 'user', content: `Question: ${sanitized.sanitized}\nData: ${JSON.stringify(rows)}` },
       ],
       temperature: AI_TEMPERATURE.SYNTHESIS,
