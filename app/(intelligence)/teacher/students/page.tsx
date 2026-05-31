@@ -87,7 +87,6 @@ export default async function TeacherStudentsPage({
       .eq('school_id', user.schoolId)
       .eq('is_deleted', false)
       .eq('enrollments.school_id', user.schoolId)
-      .eq('enrollments.academic_year_id', user.academicYearId ?? '')
       .eq('enrollments.status', 'active')
       .in('enrollments.section_id', sectionIds),
 
