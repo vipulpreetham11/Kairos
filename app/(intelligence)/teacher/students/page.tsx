@@ -17,12 +17,20 @@ export default async function TeacherStudentsPage({
   const supabase = await createServerClient()
 
   // 1. Get teacher's assigned sections
-  const { data: assignments } = await supabase
+  const { data: assignments, error: assignmentError } = await supabase
     .from('teacher_assignments')
     .select('section_id, class_id, subject_id')
     .eq('teacher_id', user.userId)
     .eq('school_id', user.schoolId)
     .eq('academic_year_id', user.academicYearId ?? '')
+
+  console.log('[TEACHER_ASSIGNMENTS]', { 
+    userId: user.userId,
+    schoolId: user.schoolId, 
+    academicYearId: user.academicYearId,
+    assignments, 
+    assignmentError 
+  })
 
   const sectionIds = [
     ...new Set(
