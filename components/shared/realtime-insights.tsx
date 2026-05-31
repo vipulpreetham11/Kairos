@@ -6,6 +6,8 @@ import type { AIInsight, Role } from '@/types/ai'
 import { AIInsightCard } from '@/components/shared/ai-insight-card'
 import { InsightSkeleton } from '@/components/shared/loading-skeleton'
 import { EmptyState } from '@/components/shared/empty-state'
+import { markInsightRead, markInsightActioned } from '@/app/(intelligence)/actions'
+import { toast } from 'sonner'
 
 interface RealtimeInsightsProps {
   schoolId: string
@@ -47,11 +49,45 @@ export function RealtimeInsights({
     return () => { supabase.removeChannel(channel) }
   }, [schoolId, role, userId])
 
+  async function handleRead(insightId: string) {
+    setInsights(prev =>
+      prev.map(i => (i.id === insightId ? { ...i, is_read: true } : i))
+    )
+    const res = await markInsightRead(insightId)
+    if (!res.success) {
+      setInsights(prev =>
+        prev.map(i => (i.id === insightId ? { ...i, is_read: false } : i))
+      )
+      toast.error('Failed to mark as read: ' + res.error)
+    }
+  }
+
+  async function handleAction(insightId: string) {
+    setInsights(prev =>
+      prev.map(i => (i.id === insightId ? { ...i, action_taken: true } : i))
+    )
+    const res = await markInsightActioned(insightId)
+    if (!res.success) {
+      setInsights(prev =>
+        prev.map(i => (i.id === insightId ? { ...i, action_taken: false } : i))
+      )
+      toast.error('Failed to mark as actioned: ' + res.error)
+    } else {
+      toast.success('Insight marked as actioned')
+    }
+  }
+
   if (insights.length > 0) {
     return (
       <div className="space-y-4">
         {insights.map(insight => (
-          <AIInsightCard key={insight.id} insight={insight} role={role} />
+          <AIInsightCard 
+            key={insight.id} 
+            insight={insight} 
+            role={role} 
+            onRead={handleRead}
+            onAction={handleAction}
+          />
         ))}
       </div>
     )
