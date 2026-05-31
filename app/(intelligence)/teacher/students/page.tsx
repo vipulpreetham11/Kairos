@@ -23,6 +23,14 @@ export default async function TeacherStudentsPage({
     .eq('teacher_id', user.userId)
     .eq('school_id', user.schoolId)
 
+  // TEMP LOG
+  console.log('[DEBUG]', {
+    userId: user.userId,
+    schoolId: user.schoolId,
+    assignments,
+    rawQuery: `SELECT * FROM teacher_assignments WHERE teacher_id = '${user.userId}' AND school_id = '${user.schoolId}'`
+  })
+
   const sectionIds = [
     ...new Set(
       safe
