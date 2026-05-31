@@ -7,7 +7,7 @@ import { Users, AlertTriangle, ChevronRight } from 'lucide-react'
 export default async function TeacherStudentsPage({
   searchParams,
 }: {
-  searchParams: { section?: string }
+  searchParams: Promise<{ section?: string }>
 }) {
   const user = await requireRole(
     ['teacher'] as unknown as Array<
@@ -184,7 +184,8 @@ export default async function TeacherStudentsPage({
     .map(([id, label]) => ({ id, label }))
     .sort((a, b) => a.label.localeCompare(b.label))
 
-  const selectedSectionId = searchParams.section || 'all'
+  const resolvedParams = await searchParams
+  const selectedSectionId = resolvedParams.section || 'all'
   const filteredStudents =
     selectedSectionId === 'all'
       ? allStudents
