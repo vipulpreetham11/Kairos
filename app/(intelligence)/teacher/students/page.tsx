@@ -22,7 +22,6 @@ export default async function TeacherStudentsPage({
     .select('section_id, class_id, subject_id')
     .eq('teacher_id', user.userId)
     .eq('school_id', user.schoolId)
-    .eq('academic_year_id', user.academicYearId ?? '')
 
   console.log('[TEACHER_ASSIGNMENTS]', { 
     userId: user.userId,
