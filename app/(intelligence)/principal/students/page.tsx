@@ -34,14 +34,15 @@ type StudentRow = {
 export default async function PrincipalStudentsPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined }
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
   const user = await requireRole(['principal', 'admin', 'super_admin'] as unknown as Array<'owner' | 'principal' | 'teacher' | 'accountant' | 'parent'>)
   const supabase = await createServerClient()
   
-  const search = typeof searchParams.search === 'string' ? searchParams.search : ''
-  const classFilter = typeof searchParams.class === 'string' ? searchParams.class : ''
-  const riskFilter = typeof searchParams.risk === 'string' ? searchParams.risk : ''
+  const params = await searchParams
+  const search = typeof params.search === 'string' ? params.search : ''
+  const classFilter = typeof params.class === 'string' ? params.class : ''
+  const riskFilter = typeof params.risk === 'string' ? params.risk : ''
 
   // 1. Fetch Classes for dropdown
   const { data: classesData } = await supabase

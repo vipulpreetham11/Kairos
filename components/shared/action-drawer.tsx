@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useEffect, useState } from 'react'
 import { X } from 'lucide-react'
@@ -206,8 +206,10 @@ export function ActionDrawer({
             <button
               type="button"
               onClick={() => void generateDraft()}
-              disabled={isGenerating}
-              className="rounded border border-slate-300 px-3 py-1.5 text-xs text-slate-700 disabled:opacity-60"
+              disabled={!message}
+              className={`rounded border border-slate-300 px-3 py-1.5 text-xs text-slate-700 ${
+                !message ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
             >
               Regenerate
             </button>

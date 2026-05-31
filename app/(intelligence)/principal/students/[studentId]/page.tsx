@@ -94,14 +94,16 @@ export default async function StudentProfilePage({
     .eq('school_id', user.schoolId)
     .single()
 
-  // 3. Attendance last 60 days
-  const sixtyDaysAgo = new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString()
+  // 3. Attendance
+  const attendanceFrom = '2025-06-01'
+  const attendanceTo = '2025-11-30'
   const attendancePromise = supabase
     .from('attendance')
     .select('date, status')
     .eq('student_id', studentId)
     .eq('school_id', user.schoolId)
-    .gte('date', sixtyDaysAgo)
+    .gte('date', attendanceFrom)
+    .lte('date', attendanceTo)
     .order('date', { ascending: false })
 
   // 4. Exam results
@@ -135,7 +137,8 @@ export default async function StudentProfilePage({
     .order('due_date', { ascending: false })
 
   // 6. Homework submissions
-  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+  const homeworkFrom = '2025-06-01'
+  const homeworkTo = '2025-11-30'
   const homeworkPromise = supabase
     .from('homework_submissions')
     .select(`
@@ -148,7 +151,8 @@ export default async function StudentProfilePage({
     `)
     .eq('student_id', studentId)
     .eq('school_id', user.schoolId)
-    .gte('created_at', thirtyDaysAgo)
+    .gte('created_at', homeworkFrom)
+    .lte('created_at', homeworkTo)
     .order('created_at', { ascending: false })
     .limit(20)
 
@@ -318,7 +322,7 @@ export default async function StudentProfilePage({
 
       {/* ATTENDANCE */}
       <div className="rounded-lg border border-slate-200 bg-white p-4">
-        <h2 className="mb-4 text-base font-semibold text-slate-900">Attendance — Last 60 Days</h2>
+        <h2 className="mb-4 text-base font-semibold text-slate-900">Attendance</h2>
         <div className="flex flex-wrap gap-2">
           {attendance.map((a, i) => (
             <div 
@@ -441,7 +445,7 @@ export default async function StudentProfilePage({
 
       {/* HOMEWORK */}
       <div className="rounded-lg border border-slate-200 bg-white p-4">
-        <h2 className="mb-4 text-base font-semibold text-slate-900">Homework (Last 30 days)</h2>
+        <h2 className="mb-4 text-base font-semibold text-slate-900">Homework</h2>
         {homework.length === 0 ? (
           <p className="text-sm text-slate-500">No homework records found</p>
         ) : (
@@ -474,12 +478,12 @@ export default async function StudentProfilePage({
       <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
         <h2 className="mb-2 text-base font-semibold text-blue-900">Take Action</h2>
         <p className="mb-4 text-sm text-blue-700">Need to discuss this student's performance or attendance with their parents?</p>
-        <Link 
-          href="/principal" 
-          className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+        <a 
+          href={`/principal?draft=${studentId}`}
+          className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
         >
-          Draft WhatsApp to Parent &rarr;
-        </Link>
+          Draft WhatsApp to Parent →
+        </a>
       </div>
 
     </div>

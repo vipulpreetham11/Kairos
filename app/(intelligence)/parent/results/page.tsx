@@ -30,7 +30,7 @@ type ExamSummary = {
 export default async function ParentResultsPage({
   searchParams,
 }: {
-  searchParams: { student?: string }
+  searchParams: Promise<{ student?: string }>
 }) {
   const user = await requireRole(
     ['parent'] as unknown as Array<
@@ -106,7 +106,8 @@ export default async function ParentResultsPage({
     )
   }
 
-  const selectedId = searchParams.student ?? children[0].id
+  const params = await searchParams
+  const selectedId = params.student ?? children[0].id
   const activeChild = children.find((c) => c.id === selectedId) || children[0]
 
   // 3. Fetch results and rankings

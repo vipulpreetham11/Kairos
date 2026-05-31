@@ -34,15 +34,17 @@ export function RiskStudentsPanel({ students, schoolId, userId = '' }: RiskStude
         />
       ))}
 
-      <ActionDrawer
-        isOpen={Boolean(selectedStudent)}
-        onClose={() => setSelectedStudent(null)}
-        studentId={selectedStudent?.id ?? ''}
-        studentName={selectedStudent?.name ?? ''}
-        schoolId={schoolId}
-        userId={userId}
-        onDraft={draftMessageAction}
-      />
+      {selectedStudent && (
+        <ActionDrawer
+          isOpen={true}
+          onClose={() => setSelectedStudent(null)}
+          studentId={selectedStudent.id}
+          studentName={selectedStudent.name}
+          schoolId={schoolId}
+          userId={userId}
+          onDraft={draftMessageAction}
+        />
+      )}
     </div>
   )
 }

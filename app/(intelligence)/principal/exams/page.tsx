@@ -70,9 +70,9 @@ export default async function PrincipalExamsPage() {
   // 2. Data Computation
 
   // Exam stats
-  const examStatsMap = new Map<
+  const resultsByExamId = new Map<
     string,
-    { total: number; passed: number; failed: number; absent: number; totalPerc: number; countPerc: number }
+    { total: number; passed: number; failed: number; absent: number; totalPct: number }
   >()
 
   // Subject stats
@@ -85,28 +85,22 @@ export default async function PrincipalExamsPage() {
     // Process Exam Stats
     const eId = safe.string(r.exam_id)
     if (eId) {
-      if (!examStatsMap.has(eId)) {
-        examStatsMap.set(eId, {
+      if (!resultsByExamId.has(eId)) {
+        resultsByExamId.set(eId, {
           total: 0,
           passed: 0,
           failed: 0,
           absent: 0,
-          totalPerc: 0,
-          countPerc: 0,
+          totalPct: 0,
         })
       }
-      const eSt = examStatsMap.get(eId)!
+      const eSt = resultsByExamId.get(eId)!
       eSt.total++
       if (r.is_pass) eSt.passed++
-      if (!r.is_pass && !r.is_absent) eSt.failed++
-      if (r.is_absent) eSt.absent++
+      else if (r.is_absent) eSt.absent++
+      else eSt.failed++
 
-      const obtained = safe.number(r.marks_obtained)
-      const max = safe.number(r.max_marks)
-      if (max > 0) {
-        eSt.totalPerc += (obtained / max) * 100
-        eSt.countPerc++
-      }
+      eSt.totalPct += (safe.number(r.marks_obtained) / Math.max(safe.number(r.max_marks), 1)) * 100
     }
 
     // Process Subject Stats
@@ -175,7 +169,7 @@ export default async function PrincipalExamsPage() {
 
   let sumPassRate = 0
   let examsWithPassRate = 0
-  for (const st of examStatsMap.values()) {
+  for (const st of resultsByExamId.values()) {
     if (st.total > 0) {
       sumPassRate += (st.passed / st.total) * 100
       examsWithPassRate++
@@ -256,7 +250,7 @@ export default async function PrincipalExamsPage() {
             <div className="space-y-3">
               {examsData.map((rawExam: any) => {
                 const exam = rawExam as ExamRaw
-                const stats = examStatsMap.get(exam.id)
+                const examStats = resultsByExamId.get(exam.id)
                 const performers = topPerformersMap.get(exam.id) || []
                 const top3 = performers.slice(0, 3)
 
@@ -289,29 +283,29 @@ export default async function PrincipalExamsPage() {
                     </div>
 
                     <div className="mt-3 border-t border-slate-100 pt-3">
-                      {stats ? (
+                      {examStats && examStats.total > 0 ? (
                         <div className="flex items-center gap-3">
                           <div className="flex flex-col">
                             <span className="text-[10px] text-slate-400 uppercase tracking-wider">Avg</span>
                             <span className={`text-xs font-semibold ${
-                              stats.countPerc > 0 && (stats.totalPerc / stats.countPerc) > 80 ? 'text-emerald-600' :
-                              stats.countPerc > 0 && (stats.totalPerc / stats.countPerc) > 60 ? 'text-amber-600' :
+                              (examStats.totalPct / examStats.total) > 80 ? 'text-emerald-600' :
+                              (examStats.totalPct / examStats.total) > 60 ? 'text-amber-600' :
                               'text-red-600'
                             }`}>
-                              {stats.countPerc > 0 ? (stats.totalPerc / stats.countPerc).toFixed(1) : '0.0'}%
+                              {(examStats.totalPct / examStats.total).toFixed(1)}%
                             </span>
                           </div>
                           <div className="flex flex-col">
                             <span className="text-[10px] text-slate-400 uppercase tracking-wider">Passed</span>
-                            <span className="text-xs font-semibold text-emerald-600">{stats.passed}</span>
+                            <span className="text-xs font-semibold text-emerald-600">{examStats.passed}</span>
                           </div>
                           <div className="flex flex-col">
                             <span className="text-[10px] text-slate-400 uppercase tracking-wider">Failed</span>
-                            <span className="text-xs font-semibold text-red-600">{stats.failed}</span>
+                            <span className="text-xs font-semibold text-red-600">{examStats.failed}</span>
                           </div>
                           <div className="flex flex-col">
                             <span className="text-[10px] text-slate-400 uppercase tracking-wider">Absent</span>
-                            <span className="text-xs font-semibold text-slate-500">{stats.absent}</span>
+                            <span className="text-xs font-semibold text-slate-500">{examStats.absent}</span>
                           </div>
                         </div>
                       ) : (

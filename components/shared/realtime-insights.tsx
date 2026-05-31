@@ -72,6 +72,7 @@ export function RealtimeInsights({
         prev.map(i => (i.id === insightId ? { ...i, action_taken: false } : i))
       )
       toast.error('Failed to mark as actioned: ' + res.error)
+      throw new Error(res.error)
     } else {
       toast.success('Insight marked as actioned')
     }

@@ -8,7 +8,7 @@ import { AlertCircle, CalendarDays, CheckCircle2 } from 'lucide-react'
 export default async function ParentAttendancePage({
   searchParams,
 }: {
-  searchParams: { student?: string }
+  searchParams: Promise<{ student?: string }>
 }) {
   const user = await requireRole(
     ['parent'] as unknown as Array<
@@ -84,11 +84,13 @@ export default async function ParentAttendancePage({
     )
   }
 
-  const selectedId = searchParams.student ?? children[0].id
+  const params = await searchParams
+  const selectedId = params.student ?? children[0].id
   const activeChild = children.find((c) => c.id === selectedId) || children[0]
 
   // 3. Get attendance for selected child
-  const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString()
+  const academicYearStart = '2025-06-01'
+  const academicYearEnd = '2025-11-30'
 
   const { data: attendanceData } = await supabase
     .from('attendance')
@@ -96,7 +98,8 @@ export default async function ParentAttendancePage({
     .eq('student_id', activeChild.id)
     .eq('school_id', user.schoolId)
     .eq('academic_year_id', user.academicYearId ?? '')
-    .gte('date', ninetyDaysAgo)
+    .gte('date', academicYearStart)
+    .lte('date', academicYearEnd)
     .order('date', { ascending: false })
 
   const rawAttendance = safe.array(attendanceData)
@@ -132,8 +135,8 @@ export default async function ParentAttendancePage({
 
   const attendanceRate = totalDays > 0 ? (presentDays / totalDays) * 100 : 0
 
-  // 4. Calendar Generation (Last 3 months)
-  const todayDate = new Date()
+  // 4. Calendar Generation (Last 3 months of academic year)
+  const todayDate = new Date(academicYearEnd)
   const monthsToRender = []
   for (let i = 0; i < 3; i++) {
     const d = new Date(todayDate.getFullYear(), todayDate.getMonth() - i, 1)
@@ -207,7 +210,7 @@ export default async function ParentAttendancePage({
           <p className={`mt-1 text-2xl font-semibold ${rateColor(attendanceRate)}`}>
             {attendanceRate.toFixed(1)}%
           </p>
-          <p className="mt-1 text-xs text-slate-400">Last 90 days</p>
+          <p className="mt-1 text-xs text-slate-400">Academic Year</p>
         </div>
         
         <div className="rounded-lg border border-slate-200 bg-white p-4">

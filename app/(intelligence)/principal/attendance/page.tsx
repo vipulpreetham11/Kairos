@@ -35,9 +35,13 @@ export default async function PrincipalAttendancePage() {
   const supabase = await createServerClient()
 
   const today = new Date().toISOString().split('T')[0]
-  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+  // Fetch last 90 days of data OR from academic year start
+  // whichever has data
+  const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000)
     .toISOString()
     .split('T')[0]
+  const academicYearStart = '2025-06-01'
+  const fromDate = academicYearStart // use academic year start
 
   // Fetch all data in parallel
   const todayAttPromise = supabase
@@ -61,7 +65,8 @@ export default async function PrincipalAttendancePage() {
     .select('date, status')
     .eq('school_id', user.schoolId)
     .eq('academic_year_id', user.academicYearId || '')
-    .gte('date', thirtyDaysAgo)
+    .gte('date', fromDate)
+    .lte('date', '2025-11-30')
 
   const defaultersAttPromise = supabase
     .from('attendance')
@@ -161,6 +166,7 @@ export default async function PrincipalAttendancePage() {
       date,
       rate: stats.total > 0 ? Math.round((stats.present / stats.total) * 100) : 0,
     }))
+    .slice(-30)
 
   // 5. Compute defaulters
   const studentAttMap = new Map<

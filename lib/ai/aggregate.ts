@@ -15,8 +15,8 @@ function dayKey(date: Date): string {
   return date.toISOString().slice(0, 10)
 }
 
-function daysAgo(days: number): Date {
-  return new Date(Date.now() - days * 86400000)
+function daysAgo(days: number, baseDate: Date): Date {
+  return new Date(baseDate.getTime() - days * 86400000)
 }
 
 function parseRiskLevel(value: unknown): RiskLevel {
@@ -35,7 +35,7 @@ export async function aggregateSchoolData(params: AggregateParams): Promise<Aggr
   const supabase = await createServerClient()
   const fromDate = params.dateRange.from.toISOString().slice(0, 10)
   const toDate = params.dateRange.to.toISOString().slice(0, 10)
-  const now = Date.now()
+  const now = params.dateRange.to.getTime()
   const [attendance, fees, academic, engagement, riskSummary] = await Promise.all([
     (async () => {
       try {
@@ -65,7 +65,7 @@ export async function aggregateSchoolData(params: AggregateParams): Promise<Aggr
         const trend_labels: string[] = []
         const trend: number[] = []
         for (let i = 29; i >= 0; i -= 1) {
-          const key = dayKey(daysAgo(i))
+          const key = dayKey(daysAgo(i, params.dateRange.to))
           trend_labels.push(key)
           const day = byDay.get(key)
           trend.push(day && day.total > 0 ? Math.round((day.present / day.total) * 100) : 0)
@@ -114,7 +114,7 @@ export async function aggregateSchoolData(params: AggregateParams): Promise<Aggr
           byDay.set(key, safe.number(byDay.get(key), 0) + safe.number(r.amount))
         })
         const daily_collection_trend: number[] = []
-        for (let i = 29; i >= 0; i -= 1) daily_collection_trend.push(Math.round(safe.number(byDay.get(dayKey(daysAgo(i))), 0)))
+        for (let i = 29; i >= 0; i -= 1) daily_collection_trend.push(Math.round(safe.number(byDay.get(dayKey(daysAgo(i, params.dateRange.to))), 0)))
         const avg = daily_collection_trend.reduce((a, b) => a + b, 0) / 30
         return { total_outstanding, collection_rate, target, collected, forecast_30d: Math.round(collected + avg * 30), forecast_60d: Math.round(collected + avg * 60), high_risk_count, overdue_buckets, daily_collection_trend }
       } catch (error) {
@@ -177,7 +177,7 @@ export async function aggregateSchoolData(params: AggregateParams): Promise<Aggr
           byDay.set(key, d)
         })
         const last7Days = Array.from({ length: 7 }, (_, i) => {
-          const d = new Date()
+          const d = new Date(params.dateRange.to)
           d.setDate(d.getDate() - (6 - i))
           return d.toISOString().split('T')[0]
         })
