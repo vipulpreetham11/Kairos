@@ -21,12 +21,22 @@ function PostHogPageView(): null {
 export function Providers({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      PostHogClient.init(process.env.NEXT_PUBLIC_POSTHOG_KEY || '', {
+      const posthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY;
+      console.log('PostHog Key:', posthogKey ? 'SET' : 'NOT SET');
+
+      if (!posthogKey) {
+        console.warn('⚠️ PostHog key is not set! Events will not be tracked.');
+        return;
+      }
+
+      PostHogClient.init(posthogKey, {
         api_host: 'https://us.i.posthog.com',
         person_profiles: 'identified_only',
         capture_pageview: true,
         capture_pageleave: true,
       });
+
+      console.log('✅ PostHog initialized successfully');
     }
   }, []);
 
